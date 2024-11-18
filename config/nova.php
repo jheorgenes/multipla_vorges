@@ -174,12 +174,12 @@ return [
 
     /** Minhas customizações */
     'brand' => [
-        'logo' => public_path('/logos/logo-menu-multipla-min.png'),
-
+        'logo' => public_path('/logos/Logo-colorida.svg'),
+        //#c7910c
         'colors' => [
-            "400" => "#EA4C89",
-            "500" => "#EA4C89",
-            "600" => "#EA4C89",
+            "400" => "#c7910c",
+            "500" => "#c7910c",
+            "600" => "#c7910c",
         ]
     ],
 
@@ -213,5 +213,15 @@ return [
         'started' => '/',
         'stopped' => '/',
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Nova Translation Locale
+    |--------------------------------------------------------------------------
+    |
+    | This configuration is to allow translations in the application
+    */
+    'locale' => 'pt-BR',
+    'fallback_locale' => 'en',
 
 ];

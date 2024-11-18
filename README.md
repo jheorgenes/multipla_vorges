@@ -54,7 +54,12 @@ $ composer config http-basic.nova.laravel.com "${NOVA_USERNAME}" "${NOVA_LICENSE
 
 ### Comandos adicionados em algum momento do projeto
 
-Instalação de campos do tipo multiselect do laravel Nova.
+Traduções do Laravel Nova
 ```sh
-$ composer require optimistdigital/nova-multiselect-field
+$ php artisan vendor:publish --provider="Laravel\Nova\NovaServiceProvider"
+```
+
+Adicionando migrations de alteração
+```sh
+$ php artisan make:migration add_foreign_keys_to_service_orders_table --table=service_orders
 ```
