@@ -5,13 +5,14 @@ namespace App\Policies;
 use App\Models\Client;
 use App\Models\Permission;
 use App\Models\User;
+use App\Traits\HasPermissionTrait;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Support\Facades\DB;
 
 class ClientPolicy
 {
     /* As funções abaixo verificam (através do método hasPermission) se o usuario possui a permissão desejada para o recurso desejado */
-
+    use HasPermissionTrait;
     /**
      * Determine whether the user can view any models.
      */
@@ -67,17 +68,4 @@ class ClientPolicy
     // {
     //     //
     // }
-
-    private function hasPermission(User $user, string $recurso, string $permission): bool
-    {
-        // Obtém as permissões do usuário relacionadas ao recurso especificado
-        $permissionRecord = $user->permissions()->where('recurso', $recurso)->first();
-
-        // Verifica se o registro existe e se a permissão desejada está marcada como true
-        if ($permissionRecord && isset($permissionRecord->permissions[$permission])) {
-            return $permissionRecord->permissions[$permission] === true;
-        }
-
-        return false;
-    }
 }
