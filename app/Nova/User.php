@@ -8,6 +8,7 @@ use Laravel\Nova\Fields\Gravatar;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Password;
 use Laravel\Nova\Fields\Text;
+use Laravel\Nova\Fields\UiAvatar;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
 class User extends Resource
@@ -46,9 +47,11 @@ class User extends Resource
         return [
             ID::make()->sortable(),
 
-            Gravatar::make()->maxWidth(50),
+            // Gravatar::make()->maxWidth(50),
+            UiAvatar::make()->maxWidth(50),
+//
 
-            Text::make('Name')
+            Text::make('Nome','name')
                 ->sortable()
                 ->rules('required', 'max:255'),
 
@@ -107,5 +110,21 @@ class User extends Resource
     public function actions(NovaRequest $request)
     {
         return [];
+    }
+
+    /**
+     * O nome que será exibido na listagem de recursos.
+     */
+    public static function label()
+    {
+        return 'Usuarios';
+    }
+
+    /**
+     * O nome que será exibido quando o recurso estiver em singular.
+     */
+    public static function singularLabel()
+    {
+        return 'Usuario';
     }
 }
