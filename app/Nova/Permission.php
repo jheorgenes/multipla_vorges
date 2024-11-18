@@ -3,6 +3,7 @@
 namespace App\Nova;
 
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Select;
@@ -46,21 +47,36 @@ class Permission extends Resource
         return [
             ID::make()->sortable(),
 
-            BelongsTo::make('User')->searchable(),
+            BelongsTo::make('Usuário','User', resource: User::class)
+                ->rules('required', Rule::exists('users', 'id'))
+                ->showWhenPeeking() //Exibe as informações do usuário ao passar o mouse em cima
+                ->searchable()
+                ->filterable()
+                ->sortable(),
 
-            BooleanGroup::make('Permissions')->options([
-                'index' => 'Tela',
-                'viewAny' => 'Ver todos os registros',
-                'view' => 'Ver registro',
-                'create' => 'Cadastrar',
-                'update' => 'Atualizar',
-                'delete' => 'Deletar'
-            ])->noValueText('Nenhuma permissão selecionada')->rules('required'),
+            BooleanGroup::make('Permissões', 'permissions')
+                ->options([
+                    'index' => 'Tela',
+                    'viewAny' => 'Ver todos os registros',
+                    'view' => 'Ver detalhes do registro',
+                    'create' => 'Cadastrar',
+                    'update' => 'Atualizar',
+                    'delete' => 'Deletar'
+                ])
+                ->noValueText('Nenhuma permissão selecionada')
+                ->rules('required')
+                // ->fillUsing(function ($request, $model, $attribute, $requestAttribute) {
+                //     $model->$attribute = array_filter($request->get($requestAttribute, []));
+                // })
+                ->showOnIndex(),
 
-            Select::make('Recurso')
+            Select::make('Recurso', 'recurso')
                 ->options($this->getAvailableResources())
                 ->displayUsingLabels()
-                ->rules('required'),
+                // ->rules('required', 'exists:resources,id')
+                ->rules('required', Rule::in(array_keys($this->getAvailableResources())))
+                ->sortable()
+                ->filterable(),
         ];
     }
 
@@ -137,4 +153,41 @@ class Permission extends Resource
     {
         return [];
     }
+
+    /**
+     * O nome que será exibido na listagem de recursos.
+     */
+    public static function label()
+    {
+        return 'Permissões';
+    }
+
+    /**
+     * O nome que será exibido quando o recurso estiver em singular.
+     */
+    public static function singularLabel()
+    {
+        return 'Permissão';
+    }
+
+    public function rules(Request $request)
+    {
+        return [
+            'user_id' => 'required|exists:users,id',
+            'recurso' => [
+                'required',
+                Rule::unique('permissions')
+                    ->where('user_id', $request->user_id)
+                    ->where('recurso', $this->recurso)
+                    ->ignore($this->id), // Ignorar o registro atual ao atualizar
+            ],
+        ];
+    }
+
+    // public static function messages(Request $request)
+    // {
+    //     return [
+    //         'recurso.unique' => 'Já existe uma permissão com este recurso para o mesmo usuário.',
+    //     ];
+    // }
 }
