@@ -47,7 +47,13 @@ class Regional extends Resource
             ID::make()->sortable(),
 
             Text::make('Nome', 'name')
-                ->rules('required', 'max:255')
+                ->rules([
+                    'required',
+                    'max:255'
+                ], [
+                    'required' => 'O campo nome é obrigatório',
+                    'max' => 'O campo nome deve ter no máximo :max caracteres',
+                ])
                 ->sortable(),
 
             Select::make('Caixa', 'box')
@@ -55,7 +61,11 @@ class Regional extends Resource
                     Box::Sim->value => 'Sim',
                     Box::Nao->value => 'Nao',
                 ])
-                ->rules('required')
+                ->rules([
+                    'required'
+                ], [
+                    'required' => 'O campo Caixa deve ser preenchido',
+                ])
                 ->filterable()
                 ->sortable(),
 
@@ -64,7 +74,11 @@ class Regional extends Resource
                     Active::Sim->value => 'Sim',
                     Active::Nao->value => 'Nao',
                 ])
-                ->rules('required')
+                ->rules([
+                    'required'
+                ], [
+                    'required' => 'O campo Ativa deve ser preenchido',
+                ])
                 ->filterable()
                 ->sortable(),
         ];
@@ -133,6 +147,5 @@ class Regional extends Resource
     public  function title()
     {
         return $this->id . ' - ' . $this->name . ' - Caixa: ' . $this->box;
-        // return $this->name;
     }
 }

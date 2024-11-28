@@ -76,14 +76,6 @@ class PermissionPolicy
     }
 
     /**
-     * Determine whether the user can restore the model.
-     */
-    // public function restore(User $user, Permission $permission): bool
-    // {
-    //     return true;
-    // }
-
-    /**
      * Determine whether the user can permanently delete the model.
      */
     public function forceDelete(User $user, Permission $permission): bool
@@ -94,7 +86,7 @@ class PermissionPolicy
     protected function permissionAlreadyExists($userId, $recurso, $permissionId = null): bool
     {
         $query = Permission::where('user_id', $userId)
-                        ->where('recurso', $recurso);
+                            ->where('recurso', $recurso);
 
         if ($permissionId) {
             $query->where('id', '!=', $permissionId);

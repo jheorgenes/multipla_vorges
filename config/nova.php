@@ -222,6 +222,17 @@ return [
     | This configuration is to allow translations in the application
     */
     'locale' => 'pt-BR',
-    'fallback_locale' => 'en',
+    // 'fallback_locale' => 'en',
+    'fallback_locale' => 'pt-BR',
 
+    /*
+    |--------------------------------------------------------------------------
+    | Nova Fields Customization
+    |--------------------------------------------------------------------------
+    |
+    | Customization for Nova fields
+    */
+    'fields' => [
+        App\Nova\Fields\TelefoneField::class,
+    ],
 ];

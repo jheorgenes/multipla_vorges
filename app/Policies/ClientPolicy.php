@@ -52,20 +52,4 @@ class ClientPolicy
     {
         return $this->hasPermission($user, 'client', 'delete');
     }
-
-    // /**
-    //  * Determine whether the user can restore the model.
-    //  */
-    // public function restore(User $user, Client $client): bool
-    // {
-    //     //
-    // }
-
-    // /**
-    //  * Determine whether the user can permanently delete the model.
-    //  */
-    // public function forceDelete(User $user, Client $client): bool
-    // {
-    //     //
-    // }
 }

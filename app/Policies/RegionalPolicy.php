@@ -50,20 +50,4 @@ class RegionalPolicy
     {
         return $this->hasPermission($user, 'regional', 'delete');
     }
-
-    /**
-     * Determine whether the user can restore the model.
-     */
-    public function restore(User $user, Regional $regional): bool
-    {
-        return true;
-    }
-
-    /**
-     * Determine whether the user can permanently delete the model.
-     */
-    public function forceDelete(User $user, Regional $regional): bool
-    {
-        return true;
-    }
 }

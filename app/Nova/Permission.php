@@ -48,7 +48,12 @@ class Permission extends Resource
             ID::make()->sortable(),
 
             BelongsTo::make('Usuário','User', resource: User::class)
-                ->rules('required', Rule::exists('users', 'id'))
+                ->rules([
+                    'required'
+                ], [
+                    'required' => 'O campo usuário é obrigatório',
+                ],
+                Rule::exists('users', 'id'))
                 ->showWhenPeeking() //Exibe as informações do usuário ao passar o mouse em cima
                 ->searchable()
                 ->filterable()
@@ -73,8 +78,16 @@ class Permission extends Resource
             Select::make('Recurso', 'recurso')
                 ->options($this->getAvailableResources())
                 ->displayUsingLabels()
-                // ->rules('required', 'exists:resources,id')
-                ->rules('required', Rule::in(array_keys($this->getAvailableResources())))
+                ->rules([
+                    'required'
+                ], [
+                    'required' => 'O campo recurso é obrigatório',
+                ],
+                Rule::in(array_keys($this->getAvailableResources())),
+                Rule::unique('permissions')
+                    ->where('user_id', $request->user_id)
+                    ->where('recurso', $this->recurso)
+                    ->ignore($this->id))
                 ->sortable()
                 ->filterable(),
         ];
@@ -82,7 +95,6 @@ class Permission extends Resource
 
     public static function authorizedToCreate(Request $request): bool
     {
-        // return in_array($request->user()->role, ['admin', 'gestor']);
         return true;
     }
 
@@ -184,10 +196,11 @@ class Permission extends Resource
         ];
     }
 
-    // public static function messages(Request $request)
-    // {
-    //     return [
-    //         'recurso.unique' => 'Já existe uma permissão com este recurso para o mesmo usuário.',
-    //     ];
-    // }
+    public static function messages(Request $request)
+    {
+        return [
+            'user.exists' => 'Usuário não encontrado.',
+            'recurso.unique' => 'Já existe uma permissão com este recurso para o mesmo usuário.',
+        ];
+    }
 }

@@ -51,21 +51,4 @@ class BrandPolicy
     {
         return $this->hasPermission($user, 'brand', 'delete');
     }
-
-    /**
-     * Determine whether the user can restore the model.
-     */
-    // public function restore(User $user, Brand $brand): bool
-    // {
-    //     return $this->hasPermission($user, 'brand', 'restore');
-    // }
-
-    // /**
-    //  * Determine whether the user can permanently delete the model.
-    //  */
-    // public function forceDelete(User $user, Brand $brand): bool
-    // {
-    //     //
-    // }
-
 }

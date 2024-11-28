@@ -49,14 +49,29 @@ Depois rode o comando abaixo:
 $ composer config http-basic.nova.laravel.com "${NOVA_USERNAME}" "${NOVA_LICENSE_KEY}"
 ```
 
-
-
-
 ### Comandos adicionados em algum momento do projeto
+
+Criando um novo Resource
+```sh
+$ php artisan nova:resource <nomeResource>
+```
 
 Traduções do Laravel Nova
 ```sh
 $ php artisan vendor:publish --provider="Laravel\Nova\NovaServiceProvider"
+```
+
+```sh
+$ php artisan vendor:publish
+```
+
+Adicionando dependência do LucasCudo (Canal no Youtute) para obter as traduções
+```sh
+$ composer require lucascudo/laravel-pt-br-localization --dev
+```
+
+```sh
+$ php artisan vendor:publish --tag=laravel-pt-br-localization
 ```
 
 Adicionando migrations de alteração

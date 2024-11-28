@@ -46,7 +46,10 @@ class Brand extends Resource
             ID::make()->sortable(),
             Text::make('Name', 'name')
                 ->updateRules('unique:brands,name,{{resourceId}}')
-                ->rules('required', 'max:255')
+                ->rules('required', 'max:255', [
+                    'required' => 'O campo Nome deve ser preenchido',
+                    'max' => 'O campo Nome deve ter no máximo :max caracteres',
+                ])
                 ->sortable(),
         ];
     }

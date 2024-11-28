@@ -29,7 +29,7 @@ class Installer extends Resource
      * @var array
      */
     public static $search = [
-        'id',
+        'id', 'name',
     ];
 
     /**
@@ -43,6 +43,13 @@ class Installer extends Resource
         return [
             ID::make()->sortable(),
             Text::make('Nome', 'name')
+                ->rules([
+                    'required',
+                    'max:255'
+                ], [
+                    'required' => 'O campo Nome deve ser preenchido',
+                    'max' => 'O campo Nome deve ter no máximo 255 caracteres',
+                ])
                 ->updateRules('unique:installers,name,{{resourceId}}')
                 ->sortable(),
         ];
@@ -107,16 +114,4 @@ class Installer extends Resource
     {
         return 'Instalador';
     }
-
-    // /**
-    //  * Permite que, ao pesquisar esse recurso em outra tela, seja possível pesquisar parcialmente pelo nome.
-    //  */
-    // public static function relatableQuery(NovaRequest $request, $query)
-    // {
-    //     if ($request->search) {
-    //         $query->where('name', 'like', '%' . $request->search . '%'); // Pesquisa com LIKE
-    //     }
-
-    //     return $query;
-    // }
 }

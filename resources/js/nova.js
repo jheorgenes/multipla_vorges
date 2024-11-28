@@ -15,3 +15,5 @@ Nova.booting((Vue, router, store) => {
         }
     });
 });
+
+require('./telefone-mask');
