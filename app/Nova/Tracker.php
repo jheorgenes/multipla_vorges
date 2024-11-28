@@ -9,7 +9,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Laravel\Nova\Fields\BelongsTo;
+use Laravel\Nova\Fields\BelongsToMany;
 use Laravel\Nova\Fields\FormData;
+use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Text;
@@ -62,7 +64,6 @@ class Tracker extends Resource
                 ->showOnCreating()
                 ->showWhenPeeking()
                 ->filterable()
-                // ->searchable()
                 ->sortable(),
 
             Text::make('Modelo', 'model')
@@ -78,36 +79,53 @@ class Tracker extends Resource
                 ->filterable()
                 ->sortable(),
 
-            BelongsTo::make('Operadora', 'operator', resource: Operator::class)
-                ->rules('required', Rule::exists('operators', 'id'))
-                // ->searchable()
-                ->showCreateRelationButton()
-                ->modalSize('3xl')
-                ->showOnCreating()
-                ->filterable()
-                ->sortable()
-                ->showWhenPeeking(),
+            Text::make('Cartões SIM', 'simCards', function () {
+                // Retorna uma string formatada com todos os SIM Cards relacionados
+                return $this->simCards->pluck('number')->join(', ');
+            })->onlyOnIndex(), // Exibe apenas na lista (tela de index)
 
-            /**
-             *  Só vão aparecer a lista de Cartões SIM na edição e criação, os cartões SIM que estiver vinculado a operadora, quando a operadora for selecionada
-             */
-            BelongsTo::make('Cartão SIM', 'sim_card', resource: SimCard::class)
-                ->dependsOn(['operator'], function (BelongsTo $field, NovaRequest $request, FormData $data) {
-                    // Se não houver operadora, esconde o campo
-                    if(!$data->get('operator')) {
-                        $field->hide();
-                    }
-                    // Se houver operadora, mostra o campo filtrando os cartões SIM vinculados a operadora
-                    $field->relatableQueryUsing(function (Request $request, Builder $query) use ($data) {
-                        return $query->where('operator_id', $data->get('operator'));
-                    })->rules('required', Rule::exists('sim_cards','id'));
-                })
-                ->showCreateRelationButton() //Botão para criar um novo cartão SIM
-                ->modalSize('3xl') //   Tamanho do modal para criar um novo cartão SIM
-                ->showOnCreating()
+            // Relacionamento com Sim Cards
+            BelongsToMany::make('Cartões SIM', 'simCards', SimCard::class)
+                ->rules('required', Rule::exists('sim_cards', 'id'))
                 ->filterable()
                 ->sortable()
-                ->showWhenPeeking(),
+                ->showOnCreating()
+                ->showWhenPeeking()
+                ->showCreateRelationButton(),
+
+            // Relacionamento com Operators
+            // BelongsToMany::make('Operadoras', 'operators', Operator::class),
+
+            // BelongsTo::make('Operadora', 'operator', resource: Operator::class)
+            //     ->rules('required', Rule::exists('operators', 'id'))
+            //     // ->searchable()
+            //     ->showCreateRelationButton()
+            //     ->modalSize('3xl')
+            //     ->showOnCreating()
+            //     ->filterable()
+            //     ->sortable()
+            //     ->showWhenPeeking(),
+
+            // /**
+            //  *  Só vão aparecer a lista de Cartões SIM na edição e criação, os cartões SIM que estiver vinculado a operadora, quando a operadora for selecionada
+            //  */
+            // BelongsTo::make('Cartão SIM', 'sim_card', resource: SimCard::class)
+            //     ->dependsOn(['operator'], function (BelongsTo $field, NovaRequest $request, FormData $data) {
+            //         // Se não houver operadora, esconde o campo
+            //         if(!$data->get('operator')) {
+            //             $field->hide();
+            //         }
+            //         // Se houver operadora, mostra o campo filtrando os cartões SIM vinculados a operadora
+            //         $field->relatableQueryUsing(function (Request $request, Builder $query) use ($data) {
+            //             return $query->where('operator_id', $data->get('operator'));
+            //         })->rules('required', Rule::exists('sim_cards','id'));
+            //     })
+            //     ->showCreateRelationButton() //Botão para criar um novo cartão SIM
+            //     ->modalSize('3xl') //   Tamanho do modal para criar um novo cartão SIM
+            //     ->showOnCreating()
+            //     ->filterable()
+            //     ->sortable()
+            //     ->showWhenPeeking(),
 
             Select::make('Situação Rastreador', 'situationTracker')
                 ->options([
@@ -118,6 +136,9 @@ class Tracker extends Resource
                 ->rules('required')
                 ->filterable()
                 ->sortable(),
+
+            BelongsToMany::make('Ordens de Serviço', 'serviceOrders', ServiceOrder::class)
+                ->readonly(),
         ];
     }
 
@@ -179,5 +200,10 @@ class Tracker extends Resource
     public static function singularLabel()
     {
         return 'Rastreador';
+    }
+
+    public  function title()
+    {
+        return $this->brand['name'] . ' -> ' . $this->model . ' - ' . $this->imei; /*. ' - Chip: [' . $this->simCard['number'] . ']' */;
     }
 }

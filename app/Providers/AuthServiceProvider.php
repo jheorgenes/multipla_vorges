@@ -9,6 +9,7 @@ use App\Policies\RegionalPolicy;
 use App\Policies\ServiceOrderPolicy;
 use App\Policies\SimCardPolicy;
 use App\Policies\TableServicePolicy;
+use App\Policies\WebhookPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
 use App\Models\Client;
@@ -19,6 +20,7 @@ use App\Models\Regional;
 use App\Models\ServiceOrder;
 use App\Models\SimCard;
 use App\Models\TableService;
+use App\Models\Webhook;
 use App\Policies\ClientPolicy;
 use App\Policies\OperatorPolicy;
 use App\Policies\PermissionPolicy;
@@ -41,6 +43,7 @@ class AuthServiceProvider extends ServiceProvider
         ServiceOrder::class => ServiceOrderPolicy::class,
         SimCard::class => SimCardPolicy::class,
         TableService::class => TableServicePolicy::class,
+        Webhook::class => WebhookPolicy::class
     ];
 
     /**

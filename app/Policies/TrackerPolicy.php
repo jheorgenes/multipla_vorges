@@ -17,7 +17,6 @@ class TrackerPolicy
     public function viewAny(User $user): bool
     {
         return $this->hasPermission($user, 'tracker', 'viewAny');
-        // return true;
     }
 
     /**
@@ -52,19 +51,11 @@ class TrackerPolicy
         return $this->hasPermission($user, 'tracker', 'delete');
     }
 
-    // /**
-    //  * Determine whether the user can restore the model.
-    //  */
-    // public function restore(User $user, Tracker $tracker): bool
-    // {
-    //     return true;
-    // }
-
-    // /**
-    //  * Determine whether the user can permanently delete the model.
-    //  */
-    // public function forceDelete(User $user, Tracker $tracker): bool
-    // {
-    //     return true;
-    // }
+    /**
+     * Bloqueando a criação de OS diretamente no Rastreador
+     */
+    public function attachAnyServiceOrder(User $user, Tracker $tracker): bool
+    {
+        return false;
+    }
 }

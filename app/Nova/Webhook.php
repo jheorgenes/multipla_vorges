@@ -2,30 +2,31 @@
 
 namespace App\Nova;
 
+use App\Models\Enums\TypeWebhook;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
-use Laravel\Nova\Fields\BelongsTo;
-use Laravel\Nova\Fields\BelongsToMany;
-use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\ID;
+use Laravel\Nova\Fields\MultiSelect;
+use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Text;
+use Laravel\Nova\Fields\URL;
 use Laravel\Nova\Http\Requests\NovaRequest;
+use Laravel\Nova\Nova;
 
-class Operator extends Resource
+class Webhook extends Resource
 {
     /**
      * The model the resource corresponds to.
      *
-     * @var class-string<\App\Models\Operator>
+     * @var class-string<\App\Models\Webhook>
      */
-    public static $model = \App\Models\Operator::class;
+    public static $model = \App\Models\Webhook::class;
 
     /**
      * The single value that should be used to represent the resource when being displayed.
      *
      * @var string
      */
-    public static $title = 'name'; //Exibe o nome da operadora no filtro dos relacionamentos
+    public static $title = 'id';
 
     /**
      * The columns that should be searched.
@@ -33,7 +34,7 @@ class Operator extends Resource
      * @var array
      */
     public static $search = [
-        'id', 'name',
+        'id',
     ];
 
     /**
@@ -46,19 +47,29 @@ class Operator extends Resource
     {
         return [
             ID::make()->sortable(),
+
             Text::make('Nome', 'name')
-                ->rules([
-                    'required',
-                    'max:255'
-                ], [
-                    'required' => 'O campo Nome deve ser preenchido',
-                    'max' => 'O campo Nome deve ter no máximo :max caracteres',
+                ->rules('required', 'max:255'),
+
+            URL::make('URL', 'url_webhook')
+                ->displayUsing(fn ($value) => $value ? $value : 'Não inserido')
+                ->rules('required', 'url', 'max:255'),
+
+            Select::make('Tipo Webhook', 'type_webhook')
+                ->options([
+                    TypeWebhook::Cadastro->value => 'Cadastro',
+                    TypeWebhook::Atualizacao->value => 'Atualizacao',
+                    TypeWebhook::Remocao->value => 'Remocao',
                 ])
+                ->rules('required')
+                ->filterable()
                 ->sortable(),
 
-            HasMany::make('SimCards', 'sim_card', resource: SimCard::class)
-                ->sortable()
-                ->showWhenPeeking(),
+            MultiSelect::make('Modelos do webhook', 'models_webhook')
+                ->options($this->getResourceOptions())
+                ->displayUsingLabels()
+                ->rules('required')
+                ->help('Selecione o módulo (resource) que este webhook deve observar.'),
         ];
     }
 
@@ -106,27 +117,11 @@ class Operator extends Resource
         return [];
     }
 
-    /**
-     * O nome que será exibido na listagem de recursos.
-     */
-    public static function label()
+    public function getResourceOptions()
     {
-        return 'Operadoras';
+        return collect(Nova::$resources)
+            ->filter(fn($resource) => method_exists(new $resource, 'model')) // Filtra apenas resources que têm um modelo
+            ->mapWithKeys(fn ($resource) => [$resource => class_basename($resource)]) // Chave: nome do resource, Valor: nome base)
+            ->toArray();
     }
-
-    /**
-     * O nome que será exibido quando o recurso estiver em singular.
-     */
-    public static function singularLabel()
-    {
-        return 'Operadora';
-    }
-
-    // /**
-    //  * Método para definir o título que será exibido ao visualizar o recurso.
-    //  */
-    // public function title()
-    // {
-    //     return $this->id . ' - ' . $this->name; // Exibe o campo 'name' como título
-    // }
 }

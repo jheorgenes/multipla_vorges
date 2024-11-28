@@ -14,6 +14,7 @@ use App\Nova\SimCard;
 use App\Nova\TableService;
 use App\Nova\Tracker;
 use App\Nova\User;
+use App\Nova\Webhook;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Laravel\Nova\Menu\MenuItem;
@@ -32,8 +33,12 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
     {
         parent::boot();
 
+        Nova::resourcesIn(app_path('Nova'));
+
         // Exibindo o caminho da navegação
         Nova::withBreadcrumbs();
+
+        // Nova::initialPath(''); Define o caminho inicial
 
         // Definindo a organização de navegação com menus
         Nova::mainMenu(function (Request $request) {
@@ -56,6 +61,10 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
                     MenuItem::resource(TableService::class),
                     MenuItem::resource(ServiceOrder::class),
                 ])->icon('chip')->collapsable(),
+
+                MenuSection::make('Webhooks', [
+                    MenuItem::resource(Webhook::class),
+                ])->icon('cube')->collapsable(),
             ];
         });
     }

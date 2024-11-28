@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Operator extends Model
@@ -14,8 +15,8 @@ class Operator extends Model
         return $this->hasMany(SimCard::class);
     }
 
-    public function tracker(): HasMany
+    public function trackers(): BelongsToMany
     {
-        return $this->hasMany(Tracker::class);
+        return $this->belongsToMany(Tracker::class, 'tracker_operator');
     }
 }

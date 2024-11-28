@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class ServiceOrder extends Model
 {
-    protected $fillable = ['service', 'date', 'associate', 'plate', 'total_value', 'payment_date', 'situationOS'];
+    protected $fillable = ['service', 'date', 'associate', 'plate', 'total_value', 'payment_date', 'situationOS', 'regional_id', 'table_service_id'];
 
     protected $casts = [
         'date'=> 'date:d-m-Y',
@@ -32,5 +32,10 @@ class ServiceOrder extends Model
     public function regional(): BelongsTo
     {
         return $this->belongsTo(Regional::class);
+    }
+
+    public function trackers(): BelongsToMany
+    {
+        return $this->belongsToMany(Tracker::class, 'service_order_tracker', 'service_order_id', 'tracker_id');
     }
 }

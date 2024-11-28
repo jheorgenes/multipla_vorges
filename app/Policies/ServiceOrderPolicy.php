@@ -50,20 +50,4 @@ class ServiceOrderPolicy
     {
         return $this->hasPermission($user, 'serviceorder', 'delete');
     }
-
-    // /**
-    //  * Determine whether the user can restore the model.
-    //  */
-    // public function restore(User $user, ServiceOrder $serviceOrder): bool
-    // {
-    //     return $this->hasPermission($user, 'serviceorder', 'restore');
-    // }
-
-    // /**
-    //  * Determine whether the user can permanently delete the model.
-    //  */
-    // public function forceDelete(User $user, ServiceOrder $serviceOrder): bool
-    // {
-    //     return true;
-    // }
 }
