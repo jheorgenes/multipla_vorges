@@ -67,6 +67,8 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
                 ])->icon('cube')->collapsable(),
             ];
         });
+
+        Nova::script('custom', public_path('js/custom.js'));
     }
 
     /**
